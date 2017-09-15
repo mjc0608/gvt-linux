@@ -2331,12 +2331,13 @@ void intel_vgpu_reset_ggtt(struct intel_vgpu *vgpu)
 /**
  * intel_vgpu_reset_gtt - reset the all GTT related status
  * @vgpu: a vGPU
+ * @dmlr: true for vGPU Device Model Level Reset, false for GT Reset
  *
  * This function is called from vfio core to reset reset all
  * GTT related status, including GGTT, PPGTT, scratch page.
  *
  */
-void intel_vgpu_reset_gtt(struct intel_vgpu *vgpu)
+void intel_vgpu_reset_gtt(struct intel_vgpu *vgpu, bool dmlr)
 {
 	int i;
 
@@ -2347,6 +2348,9 @@ void intel_vgpu_reset_gtt(struct intel_vgpu *vgpu)
 	 * removing the shadow pages.
 	 */
 	intel_vgpu_free_mm(vgpu, INTEL_GVT_MM_PPGTT);
+
+	if (!dmlr)
+		return;
 
 	intel_vgpu_reset_ggtt(vgpu);
 
